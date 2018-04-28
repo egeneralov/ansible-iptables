@@ -1,0 +1,91 @@
+---
+# tasks file for iptables
+
+- name: "iptables: REJECT invalid packets"
+  iptables:
+    chain: INPUT
+    ctstate: INVALID
+    jump: REJECT
+    comment: REJECT invalid packets
+
+- name: "iptables: Allow all loopback traffic"
+  iptables:
+    chain: "{{ item }}"
+    source: 127.0.0.1/8
+    jump: ACCEPT
+    comment: Allow all loopback traffic
+  with_items:
+    - INPUT
+    - OUTPUT
+    - FORWARD
+
+- name: "iptables: Allow related and established connections"
+  iptables:
+    chain: "{{ item }}"
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+    comment: Allow related and established connections
+  with_items:
+    - INPUT
+    - OUTPUT
+    - FORWARD
+
+- name: "iptables: Allow dns requests"
+  iptables:
+    chain: OUTPUT
+    protocol: udp
+    destination_port: 53
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+    comment: Allow outgoing dns requests
+
+- name: "iptables: Allow outgoing connections to http[s]"
+  iptables:
+    chain: OUTPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+    comment: Allow outgoing connections to web
+  with_items:
+    - 80
+    - 443
+
+- name: "iptables: Allow http[s] ESTABLISHED connections"
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+    comment: Allow outgoing connections to web
+  with_items:
+    - 80
+    - 443
+
+- name: "iptables: Allow new incoming connections to ssh port"
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ ssh_port|default(22) }}"
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+    comment: Allow new incoming connections to ssh port
+
+- name: "iptables: Allow http[s] ESTABLISHED connections"
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    source_port: "{{ ssh_port|default(22) }}"
+    ctstate: ESTABLISHED
+    jump: ACCEPT
+    comment: Allow outgoing sshd connections
+
+- name: "iptables: Policy -> DROP"
+  iptables:
+    chain: "{{ item }}"
+    policy: DROP
+  with_items:
+    - INPUT
+    - OUTPUT
+    - FORWARD
