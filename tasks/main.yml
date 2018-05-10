@@ -81,6 +81,17 @@
     jump: ACCEPT
     comment: Allow outgoing sshd connections
 
+- name: "iptables: Allow icmp"
+  iptables:
+    chain: "{{ item }}"
+    protocol: icmp
+    jump: ACCEPT
+    comment: "Allow icmp"
+  with_items:
+    - INPUT
+    - OUTPUT
+    - FORWARD
+    
 - name: "iptables: Policy -> DROP"
   iptables:
     chain: "{{ item }}"
@@ -89,3 +100,16 @@
     - INPUT
     - OUTPUT
     - FORWARD
+
+- name: Save rulles
+  shell: /sbin/iptables-save > /etc/network/iptables.up.rules
+  changed_when: false
+
+- name: Auto-restore iptables on boot
+  lineinfile:
+    path: /etc/network/interfaces
+    regexp: '^post-up.*'
+    insertafter: '^iface lo inet loopback'
+    line: 'post-up /sbin/iptables-restore /etc/network/iptables.up.rules'
+
+

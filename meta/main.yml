@@ -1,7 +1,6 @@
 galaxy_info:
   author: Eduard Generalov
   description: Iptables managment
-  company: 33slona.ru
   license: MIT
   min_ansible_version: 1.2
 
@@ -13,7 +12,6 @@ galaxy_info:
     versions:
     - all
   galaxy_tags:
-    - nginx
     - iptables
 
 dependencies: []
