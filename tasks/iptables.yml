@@ -88,5 +88,3 @@
     regexp: '^post-up.*'
     insertafter: '^iface lo inet loopback'
     line: 'post-up /sbin/iptables-restore /etc/network/iptables.up.rules'
-
-

@@ -1,16 +1,19 @@
 egeneralov.iptables
-=========
+===================
 
 Basic iptables managment via ansible
+
+Variables
+---------
+
+- **manage_iptables**: `false`
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
     - hosts: servers
       roles:
-         - { role: egeneralov.iptables }
+         - { role: egeneralov.iptables, manage_iptables: true }
 
 License
 -------
