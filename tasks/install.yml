@@ -1,0 +1,14 @@
+---
+# tasks file for iptables
+
+- name: Install iptables
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    name: iptables
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install iptables
+  yum:
+    name: iptables
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Oracle Linux'
