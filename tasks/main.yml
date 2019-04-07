@@ -1,8 +1,10 @@
 ---
 # tasks file for iptables
 
-- include_tasks: "{{ item }}.yml"
+- include_tasks: "{{ file }}.yml"
   with_items:
     - install
     - iptables
+  loop_control:
+    loop_var: file
   when: manage_iptables
